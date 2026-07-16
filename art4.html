@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cas pratique – Code de déontologie immobilier</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f5f4f0;
+  color: #1a1a18;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+.wrap { max-width: 680px; margin: 0 auto; }
+h1 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #01438F;
+  margin-bottom: 0.25rem;
+}
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+.progress-row { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+.progress-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #d0cec8;
+  transition: background 0.2s;
+}
+.progress-dot.done { background: #52AE32; }
+.progress-dot.active { background: #01438F; }
+.scenario-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e0ddd6;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.scenario-badge {
+  display: inline-block;
+  background: #EAF3DE;
+  color: #27500A;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.avatar-row { display: flex; gap: 12px; align-items: center; margin-bottom: 1rem; }
+.avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  flex-shrink: 0;
+}
+.avatar.agent { background: #EAF3DE; color: #27500A; }
+.avatar.client { background: #E6F1FB; color: #0C447C; }
+.avatar.syndicat { background: #EEEDFE; color: #3C3489; }
+.avatar.marchand { background: #FAEEDA; color: #633806; }
+.avatar-name { font-size: 14px; font-weight: 600; color: #1a1a18; }
+.avatar-desc { font-size: 12px; color: #888; }
+.scene-text { font-size: 15px; line-height: 1.7; color: #2c2c2a; }
+.question-section { margin-bottom: 1.25rem; }
+.question-label {
+  font-size: 11px; font-weight: 600; color: #888;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+.question-text {
+  font-size: 15px; font-weight: 600; color: #1a1a18;
+  line-height: 1.6; margin-bottom: 1rem;
+}
+.choices { display: flex; flex-direction: column; gap: 8px; }
+.choice-btn {
+  background: #fff;
+  border: 1px solid #d0cec8;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  font-size: 14px;
+  color: #1a1a18;
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.55;
+  transition: background 0.12s, border-color 0.12s;
+}
+.choice-btn:hover { background: #f5f4f0; border-color: #a0a099; }
+.choice-btn.correct { background: #EAF3DE; border-color: #52AE32; color: #173404; }
+.choice-btn.wrong { background: #FCEBEB; border-color: #E24B4A; color: #501313; }
+.choice-btn:disabled { pointer-events: none; opacity: 0.5; }
+.feedback {
+  display: none;
+  border-left: 3px solid #52AE32;
+  background: #f5f4f0;
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.1rem;
+  margin-top: 1rem;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #2c2c2a;
+}
+.feedback.show { display: block; }
+.feedback.wrong-fb { border-left-color: #E24B4A; }
+.feedback strong { font-weight: 600; }
+.ref {
+  font-size: 12px; color: #888;
+  margin-top: 0.5rem; font-style: italic;
+}
+.nav-row {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-top: 1.25rem;
+}
+.q-counter { font-size: 13px; color: #888; }
+.next-btn {
+  display: none;
+  background: #01438F;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.25rem;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.next-btn.show { display: block; }
+.next-btn:hover { background: #143466; }
+.score-card {
+  display: none;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e0ddd6;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+.score-card.show { display: block; }
+.score-big { font-size: 56px; font-weight: 700; color: #01438F; margin: 0.5rem 0; }
+.score-sub { font-size: 15px; color: #555; margin-bottom: 1.75rem; line-height: 1.6; }
+.restart-btn {
+  background: #fff;
+  border: 1px solid #d0cec8;
+  border-radius: 8px;
+  padding: 0.65rem 1.5rem;
+  font-size: 14px;
+  color: #1a1a18;
+  cursor: pointer;
+  font-weight: 500;
+}
+.restart-btn:hover { background: #f5f4f0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Code de déontologie — Article 4 : les compétences professionnelles</h1>
+  <p class="subtitle">3 scénarios pour identifier les manquements à l'obligation de compétence, de formation continue et de recours à l'expert</p>
+
+  <div class="progress-row" id="progress-row"></div>
+
+  <div id="quiz-area">
+    <div class="scenario-card" id="scene-card"></div>
+    <div class="scenario-card" id="question-card">
+      <div class="question-section">
+        <div class="question-label">À vous de jouer</div>
+        <div class="question-text" id="q-text"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div class="nav-row">
+        <span class="q-counter" id="q-counter"></span>
+        <button class="next-btn" id="next-btn">Scénario suivant →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-card" id="score-card">
+    <div class="question-label">Votre résultat</div>
+    <div class="score-big" id="score-val">0/4</div>
+    <div class="score-sub" id="score-msg"></div>
+    <button class="restart-btn" onclick="restart()">↺ Recommencer</button>
+  </div>
+</div>
+
+<script>
+const scenarios = [
+  {
+    badge: "Scénario 1 — Formation continue",
+    avatarClass: "agent",
+    avatarInitials: "OT",
+    avatarName: "Olivier Tavernier",
+    avatarDesc: "Dirigeant d'agence, 3 négociateurs salariés",
+    scene: "Olivier dirige une agence depuis 12 ans. Il a suivi ses 14 heures de formation continue l'an dernier, mais n'a pas vérifié si ses trois négociateurs avaient eux aussi respecté leur obligation. Il estime que « ce sont des adultes responsables » et que ça ne le regarde pas.",
+    question: "Olivier manque-t-il à ses obligations au titre de l'article 4 du code de déontologie ?",
+    choices: [
+      { text: "Non, chaque professionnel est individuellement responsable de sa propre formation continue.", correct: false },
+      { text: "Non, l'obligation de formation continue ne concerne que le titulaire de la carte T.", correct: false },
+      { text: "Oui, le titulaire de la carte doit s'assurer que ses collaborateurs habilités respectent eux aussi leur obligation de formation continue.", correct: true },
+      { text: "Oui, mais seulement s'il emploie plus de 5 collaborateurs.", correct: false }
+    ],
+    feedbackOk: "Exact. L'article 4 est clair : le professionnel doit veiller à ce que ses collaborateurs habilités à négocier, s'entremettre ou s'engager en son nom respectent leur obligation de formation continue. La responsabilité d'Olivier ne s'arrête pas à sa propre formation.",
+    feedbackKo: "L'article 4 va plus loin que la formation individuelle. Le titulaire de la carte professionnelle est responsable de s'assurer que ses collaborateurs habilités — quel que soit leur nombre — respectent eux aussi leur obligation de formation continue. Olivier ne peut pas s'en désintéresser."
+  },
+  {
+    badge: "Scénario 2 — Connaissance du marché",
+    avatarClass: "client",
+    avatarInitials: "SV",
+    avatarName: "Sandra Vidal",
+    avatarDesc: "Négociatrice, spécialisée en résidentiel urbain",
+    scene: "Un client demande à Sandra d'estimer un corps de ferme de 4 hectares avec bâtiments agricoles, dans une zone rurale qu'elle ne connaît pas. Pour ne pas perdre le contact, Sandra réalise l'estimation en se basant uniquement sur des comparables résidentiels trouvés en ligne, sans mentionner à son client qu'elle n'a aucune expérience de l'immobilier rural ou agricole.",
+    question: "Sandra est-elle en conformité avec l'article 4 du code de déontologie ?",
+    choices: [
+      { text: "Oui, une estimation reste un avis de valeur non engageant juridiquement.", correct: false },
+      { text: "Oui, les outils en ligne permettent de compenser un manque d'expertise locale.", correct: false },
+      { text: "Non, elle aurait dû refuser ou faire appel à un professionnel qualifié, et en informer clairement son client.", correct: true },
+      { text: "Non, mais seulement si son estimation s'avère erronée après la vente.", correct: false }
+    ],
+    feedbackOk: "Bien joué. L'article 4 oblige le professionnel à reconnaître les limites de ses compétences. Lorsqu'une mission dépasse son domaine d'expertise, il doit soit la refuser, soit faire appel à un professionnel qualifié — et informer le client de cette situation. Sandra n'a fait ni l'un ni l'autre.",
+    feedbackKo: "La nature non contraignante d'un avis de valeur ne dispense pas du devoir de compétence. L'article 4 impose à Sandra de reconnaître les limites de son expertise et, si nécessaire, de refuser la mission ou d'associer un spécialiste en l'informant clairement son client. Réaliser une estimation sur un marché qu'on ne maîtrise pas, sans le signaler, est un manquement."
+  },
+  {
+    badge: "Scénario 3 — Recours à un expert",
+    avatarClass: "syndicat",
+    avatarInitials: "HL",
+    avatarName: "Hugo Lemaire",
+    avatarDesc: "Agent immobilier, transactions commerciales",
+    scene: "Un client confie à Hugo la vente d'un local commercial avec bail en cours. Hugo estime ne pas maîtriser suffisamment le droit des baux commerciaux et décide de faire appel à un juriste partenaire pour rédiger la note d'information juridique. Il ne mentionne pas ce recours à son client, estimant que « ça ne le concerne pas ».",
+    question: "Hugo a-t-il respecté toutes ses obligations au titre de l'article 4 ?",
+    choices: [
+      { text: "Oui, faire appel à un expert est une bonne pratique — l'essentiel est que le travail soit bien fait.", correct: false },
+      { text: "Oui, le client n'a pas besoin de connaître les intervenants internes à l'agence.", correct: false },
+      { text: "Non, le client doit être clairement informé de la nature des prestations confiées à l'intervenant extérieur ainsi que de son identité.", correct: true },
+      { text: "Non, Hugo aurait dû refuser la mission plutôt que de déléguer.", correct: false }
+    ],
+    feedbackOk: "Parfait. Faire appel à un expert est tout à fait conforme à l'article 4 — c'est même recommandé. Mais le code impose que le client soit clairement informé de la nature des prestations confiées à cet intervenant extérieur et de son identité. Hugo a bien réagi sur le fond, mais pas sur la transparence envers son client.",
+    feedbackKo: "Le recours à un expert n'est pas interdit — au contraire. Mais l'article 4 exige que le client soit informé de l'identité de l'intervenant extérieur et de la nature de ses prestations. Hugo a manqué à cette obligation de transparence, même si sa démarche de solliciter un spécialiste était la bonne."
+  }
+];
+
+
+let current = 0, score = 0, answered = false;
+
+function buildProgress() {
+  const row = document.getElementById('progress-row');
+  row.innerHTML = '';
+  scenarios.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'progress-dot' + (i < current ? ' done' : i === current ? ' active' : '');
+    row.appendChild(d);
+  });
+}
+
+function renderScene() {
+  const s = scenarios[current];
+  document.getElementById('scene-card').innerHTML = `
+    <span class="scenario-badge">${s.badge}</span>
+    <div class="avatar-row">
+      <div class="avatar ${s.avatarClass}">${s.avatarInitials}</div>
+      <div>
+        <div class="avatar-name">${s.avatarName}</div>
+        <div class="avatar-desc">${s.avatarDesc}</div>
+      </div>
+    </div>
+    <p class="scene-text">${s.scene}</p>
+  `;
+  document.getElementById('q-text').textContent = s.question;
+  document.getElementById('q-counter').textContent = `Question ${current + 1} / ${scenarios.length}`;
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  s.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c.text;
+    btn.onclick = () => answer(i);
+    choicesEl.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+  document.getElementById('next-btn').className = 'next-btn';
+  answered = false;
+  buildProgress();
+  updateNextBtn();
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  const s = scenarios[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  const isCorrect = s.choices[idx].correct;
+  if (isCorrect) score++;
+
+  btns.forEach((btn, i) => {
+    if (s.choices[i].correct) btn.classList.add('correct');
+    else btn.disabled = true;
+  });
+  if (!isCorrect) btns[idx].classList.add('wrong');
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show' + (isCorrect ? '' : ' wrong-fb');
+  fb.innerHTML = (isCorrect
+    ? '<strong>✓ Bonne réponse.</strong> '
+    : '<strong>✗ Pas cette fois.</strong> ')
+    + (isCorrect ? s.feedbackOk : s.feedbackKo)
+    + `<div class="ref">Référence : Code de déontologie des professions immobilières — article 4 (compétences professionnelles, formation continue, limites d'expertise, recours à l'expert)</div>`;
+
+  document.getElementById('next-btn').className = 'next-btn show';
+}
+
+document.getElementById('next-btn').onclick = () => {
+  current++;
+  if (current < scenarios.length) {
+    renderScene();
+  } else {
+    showScore();
+  }
+};
+
+function updateNextBtn() {
+  const btn = document.getElementById('next-btn');
+  btn.textContent = current === scenarios.length - 1 ? 'Voir mes résultats →' : 'Scénario suivant →';
+}
+
+function showScore() {
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('progress-row').style.display = 'none';
+  const sc = document.getElementById('score-card');
+  sc.className = 'score-card show';
+  document.getElementById('score-val').textContent = score + ' / ' + scenarios.length;
+  const msgs = [
+    "Reprenez les obligations de l'article 4 : formation continue, connaissance du marché, limites de compétence et recours à l'expert.",
+    "Une notion à retravailler. Relisez le scénario que vous avez manqué.",
+    "Bien ! Deux situations bien maîtrisées sur trois.",
+    "Excellent ! Vous maîtrisez parfaitement les obligations de compétence et de formation de l'article 4."
+  ];
+  document.getElementById('score-msg').textContent = msgs[Math.min(score, 3)];
+}
+
+function restart() {
+  current = 0; score = 0; answered = false;
+  document.getElementById('quiz-area').style.display = '';
+  document.getElementById('progress-row').style.display = '';
+  document.getElementById('score-card').className = 'score-card';
+  renderScene();
+}
+
+renderScene();
+</script>
+</body>
+</html>
